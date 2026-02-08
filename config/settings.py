@@ -1,44 +1,32 @@
 from pathlib import Path
+import os
+from dotenv import load_dotenv
+
+# تحميل متغيرات البيئة
+load_dotenv()
 
 # ======================================
 # BASE DIRECTORY
 # ======================================
-# المسار الأساسي للمشروع (root directory)
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-
-# ======================================
-# MEDIA FILES (User Uploads)
-# ======================================
-# رابط الوصول للملفات المرفوعة
-MEDIA_URL = "/media/"
-
-# المسار الفعلي لتخزين الملفات محليًا
-MEDIA_ROOT = BASE_DIR / "media"
 
 
 # ======================================
 # SECURITY SETTINGS
 # ======================================
-# ⚠️ مفتاح سري للتشفير (لا ترفعيه على GitHub)
-# لاحقًا سننقله إلى .env
-SECRET_KEY = 'django-insecure-d&e3-+-&lr!jmeufj9yx&@qejn$f^azqwu=d74@aa!nv^tqr)#'
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
-# وضع التطوير
-# True = تطوير
-# False = Production
-DEBUG = True
+DEBUG = os.environ.get("DEBUG", "False") == "True"
 
-# السماح بالوصول للتطبيق
-# محليًا فقط
-ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+ALLOWED_HOSTS = os.environ.get(
+    "ALLOWED_HOSTS", ""
+).split(",")
 
 
 # ======================================
 # APPLICATION DEFINITION
 # ======================================
 INSTALLED_APPS = [
-    # Django core apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -46,7 +34,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # Custom app
     "uploads.apps.UploadsConfig",
 ]
 
@@ -54,15 +41,14 @@ INSTALLED_APPS = [
 # ======================================
 # MIDDLEWARE
 # ======================================
-# طبقات معالجة الطلبات (Request / Response)
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',      # أمان أساسي
-    'django.contrib.sessions.middleware.SessionMiddleware',  # الجلسات
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',           # حماية CSRF
-    'django.contrib.auth.middleware.AuthenticationMiddleware',  # تسجيل الدخول
-    'django.contrib.messages.middleware.MessageMiddleware',     # الرسائل
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',  # حماية iframe
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
 
@@ -86,8 +72,9 @@ TEMPLATES = [
     },
 ]
 
+
 # ======================================
-# WSGI (Deployment)
+# WSGI
 # ======================================
 WSGI_APPLICATION = 'config.wsgi.application'
 
@@ -95,7 +82,6 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # ======================================
 # DATABASE
 # ======================================
-# قاعدة بيانات SQLite (مناسبة للتطوير)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -107,42 +93,38 @@ DATABASES = {
 # ======================================
 # PASSWORD VALIDATION
 # ======================================
-# قواعد أمان كلمات المرور
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
 
 # ======================================
 # INTERNATIONALIZATION
 # ======================================
-# اللغة الافتراضية (قياسي للمشاريع السحابية)
 LANGUAGE_CODE = 'en-us'
-
-# التوقيت العالمي (أفضل خيار للسيرفرات)
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
 USE_TZ = True
 
 
 # ======================================
-# STATIC FILES (CSS, JS, Images)
+# STATIC FILES
 # ======================================
-# رابط الملفات الثابتة
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# المسار النهائي بعد collectstatic
-# مهم جدًا عند النشر على ECS + Nginx
-STATIC_ROOT = BASE_DIR / "staticfiles"
+
+# ======================================
+# MEDIA FILES
+# ======================================
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+
+# ======================================
+# DEFAULT PRIMARY KEY
+# ======================================
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
